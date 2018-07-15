@@ -1,0 +1,33 @@
+{
+  "name": "bulky",
+  "version": "1.0.0",
+  "description": "Batch processing made simple",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavideBecker/Bulky.git"
+  },
+  "author": "Davide Becker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavideBecker/Bulky/issues"
+  },
+  "homepage": "https://github.com/DavideBecker/Bulky#readme",
+  "dependencies": {
+    "electron": "^2.0.5",
+    "electron-connect": "^0.6.3",
+    "gulp": "^3.9.1",
+    "gulp-sass": "^4.0.1",
+    "gulp-typescript": "^5.0.0-alpha.3",
+    "jquery": "^3.3.1",
+    "sharp": "^0.20.5",
+    "typescript": "^2.9.2"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.4"
+  }
+}

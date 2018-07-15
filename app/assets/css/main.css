@@ -1,0 +1,215 @@
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline; }
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
+  display: block; }
+
+body {
+  line-height: 1; }
+
+ol, ul {
+  list-style: none; }
+
+blockquote, q {
+  quotes: none; }
+
+blockquote:before, blockquote:after, q:before, q:after {
+  content: '';
+  content: none; }
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0; }
+
+/* -------------------------------------------------------------
+  Sass CSS3 Mixins! The Cross-Browser CSS3 Sass Library
+  By: Matthieu Aussaguel, http://www.mynameismatthieu.com, @matthieu_tweets
+
+  List of CSS3 Sass Mixins File to be @imported and @included as you need
+
+  The purpose of this library is to facilitate the use of CSS3 on different browsers avoiding HARD TO READ and NEVER
+  ENDING css files
+
+  note: All CSS3 Properties are being supported by Safari 5
+  more info: http://www.findmebyip.com/litmus/#css3-properties
+
+------------------------------------------------------------- */
+/* montserrat-300 - latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 300;
+  src: local("Montserrat Light"), local("Montserrat-Light"), url("../fonts/montserrat-v12-latin-300.woff2") format("woff2"), url("../fonts/montserrat-v12-latin-300.woff") format("woff");
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ }
+
+/* montserrat-regular - latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 400;
+  src: local("Montserrat Regular"), local("Montserrat-Regular"), url("../fonts/montserrat-v12-latin-regular.woff2") format("woff2"), url("../fonts/montserrat-v12-latin-regular.woff") format("woff");
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ }
+
+/* montserrat-600 - latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 600;
+  src: local("Montserrat SemiBold"), local("Montserrat-SemiBold"), url("../fonts/montserrat-v12-latin-600.woff2") format("woff2"), url("../fonts/montserrat-v12-latin-600.woff") format("woff");
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ }
+
+/* montserrat-700 - latin */
+@font-face {
+  font-family: 'Montserrat';
+  font-style: normal;
+  font-weight: 700;
+  src: local("Montserrat Bold"), local("Montserrat-Bold"), url("../fonts/montserrat-v12-latin-700.woff2") format("woff2"), url("../fonts/montserrat-v12-latin-700.woff") format("woff");
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */ }
+
+html {
+  background-color: #0D101D; }
+  html * {
+    font-family: "Montserrat";
+    box-sizing: border-box; }
+
+html,
+body {
+  height: 100%; }
+
+body[data-step="initial"] #file-list {
+  display: none; }
+
+body[data-step="file-list"] #initial-upload {
+  display: none; }
+
+#main-wrapper {
+  height: 100%;
+  padding-top: 32px; }
+
+#initial-upload {
+  animation: revealContent 1.4s cubic-bezier(0.7, 0, 0.3, 1) both; }
+
+.wrapper.fullsize {
+  height: 100%; }
+
+.wrapper.centered {
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+.wrapper.flex {
+  display: flex; }
+  .wrapper.flex.--column {
+    flex-direction: column; }
+
+.overlay {
+  background-color: #1D2134;
+  border-radius: 12px;
+  padding: 20px;
+  color: #747474;
+  box-shadow: 0px 2px 1px rgba(0, 0, 0, 0.5); }
+  .overlay .headline {
+    text-align: center;
+    font-weight: 600;
+    margin-bottom: 16px; }
+
+.vector {
+  width: 32px;
+  height: 32px;
+  display: block;
+  margin: 0 auto; }
+  .vector.big {
+    width: 64px;
+    height: 64px; }
+
+.radio-button-wrapper {
+  display: block; }
+  .radio-button-wrapper .radio-button-input {
+    visibility: hidden;
+    width: 0;
+    height: 0;
+    margin: 0;
+    position: absolute; }
+    .radio-button-wrapper .radio-button-input:checked + .radio-button-label {
+      background-image: linear-gradient(180deg, #1BC3FF, #2754FF);
+      border-color: #2754FF;
+      color: #FFF; }
+      .radio-button-wrapper .radio-button-input:checked + .radio-button-label .vector {
+        fill: #FFF; }
+  .radio-button-wrapper .radio-button-label {
+    padding: 20px;
+    margin: 10px;
+    border-radius: 6px;
+    display: block;
+    background-color: rgba(54, 60, 89, 0.5);
+    transition: background 240ms ease; }
+    .radio-button-wrapper .radio-button-label .vector {
+      fill: #0D101D; }
+    .radio-button-wrapper .radio-button-label .radio-button-label-text {
+      margin-top: 16px; }
+    .radio-button-wrapper .radio-button-label:hover {
+      background-color: #363C59;
+      cursor: pointer; }
+
+#selected-files {
+  display: table;
+  width: 100%; }
+  #selected-files .file {
+    display: table-row;
+    background-color: #363C59;
+    animation: revealContent 240ms cubic-bezier(0.7, 0, 0.3, 1) both;
+    outline: 1px solid #1D2134; }
+    #selected-files .file .file-info {
+      display: table-cell;
+      color: #747474;
+      padding: 16px; }
+
+#drag-file {
+  border: 3px dashed #363C59;
+  padding: 24px;
+  fill: #4e536e;
+  position: relative; }
+  #drag-file:hover {
+    cursor: pointer;
+    border-color: #1BC3FF; }
+  #drag-file.active {
+    border-color: #1BC3FF;
+    animation: pulse 2.3s ease infinite; }
+
+#titlebar {
+  background-color: #4e536e;
+  height: 32px;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  -webkit-user-select: none;
+  -webkit-app-region: drag;
+  animation: placeTitlebar 1s cubic-bezier(0.7, 0, 0.3, 1) both;
+  z-index: 999; }
+
+@keyframes pulse {
+  0%, 100% {
+    color: #4e536e;
+    fill: #4e536e; }
+  50% {
+    color: #1BC3FF;
+    fill: #1BC3FF; } }
+
+@keyframes placeTitlebar {
+  0% {
+    height: 100%; }
+  100% {
+    height: 32px; } }
+
+@keyframes revealContent {
+  0% {
+    transform: translateY(-60px);
+    opacity: 0; }
+  100% {
+    transform: translateY(0px);
+    opacity: 1; } }
