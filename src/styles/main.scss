@@ -29,7 +29,7 @@ body {
 
 body {
     &[data-stage="parsing"] {
-        #parsing-progress {
+        #progress-indicator {
             display: block;
         }
     }
@@ -38,6 +38,11 @@ body {
             display: flex;
         }
         #begin-converting {
+            display: block;
+        }
+    }
+    &[data-stage="converting"] {
+        #progress-indicator {
             display: block;
         }
     }
@@ -90,6 +95,7 @@ body {
     background-color: $dark;
     margin: 8px 0;
     border-radius: 2px;
+    overflow: hidden;
     .progress-bar {
         height: 4px;
         background-image: linear-gradient(90deg, $greenStart, $greenEnd);
@@ -215,15 +221,26 @@ body {
     }
 }
 
-.settings-container {
-    display: none;
+.settings-group {
+    // display: none;
     background-color: $blueEnd;
     color: #FFF;
     margin-bottom: 10px;
     padding: 16px;
 }
 
-#parsing-progress {
+.feature-label {
+    font-weight: 600;
+    margin-top: 16px;
+    display: inline-block;
+}
+
+.feature-description {
+    color: rgba(#FFF, 0.7);
+    margin: 4px 0 0 8px;
+}
+
+#progress-indicator {
     display: none;
     margin: 32px 0 16px 0;
 }

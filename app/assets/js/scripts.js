@@ -23,12 +23,231 @@ function tpl(id) {
     return doT.template(getElem('tpl-' + id).innerHTML)
 }
 
+function guid() {
+    var S4 = function() {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(
+            1);
+    };
+    return S4() + S4();
+}
+
+class SettingsInterface {
+    createInterface(param, ref, refKey) {
+        var elem
+
+        switch (param.type) {
+            case 'number':
+                elem = document.createElement('input')
+                elem.type = 'number'
+                elem.name = param.name
+                elem.placeholder = param.label
+                elem.addEventListener('input', function() {
+                    ref[refKey] = +this.value
+                })
+                break;
+
+            case 'range':
+                elem = document.createElement('div')
+
+                var label = document.createElement('div')
+                label.classList.add('feature-label')
+                label.innerHTML = param.label
+
+                var input = document.createElement('input')
+                input.type = 'range'
+                input.name = param.name
+                input.min = param.min
+                input.max = param.max
+                input.step = param.step
+
+                elem.appendChild(label)
+                elem.appendChild(input)
+
+                break;
+
+            case 'magic':
+                elem = false
+                break;
+
+            case 'object':
+                elem = document.createElement('div')
+                ref[refKey] = {}
+
+                for (var subParam of param.params) {
+                    ref[refKey][subParam.name] = false
+                    var subElem = this.createInterface(subParam, ref[refKey], [
+                        subParam.name
+                    ])
+                    if (subElem) {
+                        elem.appendChild(subElem)
+                    }
+                }
+
+                break;
+
+            default:
+                elem = document.createElement('input')
+                elem.type = 'text'
+                elem.name = param.name
+                elem.placeholder = param.label
+                break;
+        }
+
+        return elem
+    }
+
+    constructor(data) {
+        this.name = data.name
+        this.value = false
+        this.elem = this.createInterface(data, this, 'value')
+    }
+}
+
+class Feature {
+    createInterfaceForParameter(param) {
+
+        return {
+            element: elem,
+            raw: param,
+        }
+    }
+
+    constructor(data) {
+        var that = this;
+        this.id = guid();
+        this.params = []
+        this.enabled = false
+        this.name = data.name
+
+        this.tree = document.createElement('div')
+        this.tree.classList.add('feature')
+        this.tree.dataset.settingsFeature = this.id
+
+        if (data.required) {
+            var featureLabel = document.createElement('div')
+            featureLabel.classList.add('feature-label')
+            featureLabel.innerHTML = data.label
+            this.tree.appendChild(featureLabel)
+        } else {
+            var featureCheckbox = document.createElement('input')
+            featureCheckbox.type = 'checkbox'
+            featureCheckbox.id = 'enable-' + this.id
+            featureCheckbox.checked = this.enabled
+            featureCheckbox.addEventListener('change', function() {
+                that.enabled = !that.enabled
+            })
+            this.tree.appendChild(featureCheckbox)
+
+            var featureLabel = document.createElement('label')
+            featureLabel.htmlFor = 'enable-' + this.id
+            featureLabel.classList.add('feature-label')
+            featureLabel.innerHTML = data.label
+            this.tree.appendChild(featureLabel)
+        }
+
+        var featureDescription = document.createElement('div')
+        featureDescription.classList.add('feature-description')
+        featureDescription.innerHTML = data.description
+        this.tree.appendChild(featureDescription)
+
+        for (var param of data.params) {
+            var inter = new SettingsInterface(param)
+            this.params.push(inter)
+            if (inter.elem) {
+                this.tree.appendChild(inter.elem)
+            }
+        }
+    }
+
+    render() {
+        return this.tree
+    }
+}
+
+class Settings {
+    createFeature(data) {
+        return new Feature(data)
+    }
+
+    constructor(initialData) {
+        this.id = guid()
+        this.initialData = initialData
+        this.tree = document.createElement('div')
+        this.tree.classList.add('settings-group')
+        this.tree.dataset.settingsGroup = this.id
+        this.features = []
+
+        for (var chainElement of this.initialData) {
+            var f = this.createFeature(chainElement)
+            this.features.push(f)
+            this.tree.appendChild(f.render())
+        }
+
+        console.log(this.tree)
+        uploader.appendChild(this.tree)
+    }
+}
+
+var imageSettings = new Settings([{
+        name: 'resize',
+        label: 'Resize',
+        description: 'Resize the image to a specified size. More options for the behaviour can be found below',
+        params: [{
+            type: 'number',
+            name: 'width',
+            label: 'width'
+        }, {
+            type: 'number',
+            name: 'height',
+            label: 'height'
+        }],
+    },
+    {
+        name: 'jpeg',
+        label: 'JPEG processing settings',
+        description: 'Options for jpg files',
+        required: true,
+        params: [{
+            type: 'object',
+            name: 'options',
+            label: 'Options',
+            params: [{
+                type: 'range',
+                name: 'quality',
+                label: 'Quality',
+                from: 0,
+                to: 100,
+                step: 1,
+            }, {
+                type: 'magic',
+                name: 'force',
+                value: true
+            }]
+        }]
+    },
+    {
+        name: 'max',
+        label: 'Crop to exact size',
+        description: 'Crops the image to exactly fit the specified size. By default the image will be scaled to be smaller than the specified size, but keep its proportions.',
+        params: [],
+        reverse: true
+    },
+    {
+        name: 'withoutEnlargement',
+        label: 'Upscale to fit size',
+        description: 'Scale the image up if it\'s smaller than the specified size. This can easily result in a blurry image.',
+        params: []
+    }
+])
+console.log(imageSettings)
+
 const elems = {
     files: getElem('selected-files'),
     fileCatcher: getElem('drag-file'),
     uploader: getElem('uploader'),
     settingsButtons: getElem('settings-buttons'),
     parsingProgressBar: getElem('parsing-progress-bar'),
+    progressLabel: getElem('progress-label'),
     videoStats: getElem('video-stats'),
     imageStats: getElem('image-stats'),
     audioStats: getElem('audio-stats'),
@@ -172,29 +391,42 @@ elems.begin.addEventListener('click', function() {
         //     input: fileBacklog.image.files
         // })
 
+        var i = 0;
+        elems.parsingProgressBar.style.width = 0
+        elems.progressLabel.innerHTML = '0 / ' + fileBacklog.image.files
+            .length
+
+        switchStage('converting')
+
         for (var image of fileBacklog.image.files) {
 
             sharp(image.path)
                 .resize(1920, 1080, {
-                    kernel: sharp.kernel.nearest
+                    // kernel: sharp.kernel.nearest
                 })
-                .max()
+                // .max()
                 .withoutEnlargement(true)
                 // .toBuffer()
                 .toFile(path.join(output[0], '/', image.name))
-            .then(info => {
-                i++;
-                console.log({
-                    type: 'progress',
-                    count: i
+                .then(info => {
+                    i++;
+                    elems.progressLabel.innerHTML = i + ' / ' +
+                        fileBacklog.image
+                        .files.length
+                    elems.parsingProgressBar.style.width = (i /
+                        fileBacklog.image.files.length *
+                        100) + '%'
+                    console.log({
+                        type: 'progress',
+                        count: i
+                    })
                 })
-            })
-            .catch(err => {
-                console.log({
-                    type: 'error',
-                    message: err
-                })
-            });
+                .catch(err => {
+                    console.log({
+                        type: 'error',
+                        message: err
+                    })
+                });
         }
     }
 })
@@ -207,6 +439,7 @@ fileSorter.addEventListener('message', function(e) {
     let data = e.data
 
     if (data.type == 'progress') {
+        elems.progressLabel.innerHTML = data.count + ' / ' + backlog
         elems.parsingProgressBar.style.width = (data.count / backlog *
             100) + '%'
     } else if (data.type == 'done') {
@@ -215,13 +448,13 @@ fileSorter.addEventListener('message', function(e) {
             var stats = data.result
 
             elems.videoStats.innerHTML = stats.video.files.length +
-                ' files - ' + stats.video.totalSize
+                ' file(s) - ' + stats.video.totalSize
 
             elems.imageStats.innerHTML = stats.image.files.length +
-                ' files - ' + stats.image.totalSize
+                ' file(s) - ' + stats.image.totalSize
 
             elems.audioStats.innerHTML = stats.audio.files.length +
-                ' files - ' + stats.audio.totalSize
+                ' file(s) - ' + stats.audio.totalSize
             switchStage('parsed')
         })
     }

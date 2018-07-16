@@ -81,13 +81,16 @@ html,
 body {
   height: 100%; }
 
-body[data-stage="parsing"] #parsing-progress {
+body[data-stage="parsing"] #progress-indicator {
   display: block; }
 
 body[data-stage="parsed"] #settings-buttons {
   display: flex; }
 
 body[data-stage="parsed"] #begin-converting {
+  display: block; }
+
+body[data-stage="converting"] #progress-indicator {
   display: block; }
 
 body[data-settings="video"] #settings-video {
@@ -124,7 +127,8 @@ body[data-settings="audio"] #settings-audio {
   height: 4px;
   background-color: #363C59;
   margin: 8px 0;
-  border-radius: 2px; }
+  border-radius: 2px;
+  overflow: hidden; }
   .progress .progress-bar {
     height: 4px;
     background-image: linear-gradient(90deg, #00B3C7, #03EC77); }
@@ -216,14 +220,22 @@ body[data-settings="audio"] #settings-audio {
       color: #747474;
       padding: 16px; }
 
-.settings-container {
-  display: none;
+.settings-group {
   background-color: #2754FF;
   color: #FFF;
   margin-bottom: 10px;
   padding: 16px; }
 
-#parsing-progress {
+.feature-label {
+  font-weight: 600;
+  margin-top: 16px;
+  display: inline-block; }
+
+.feature-description {
+  color: rgba(255, 255, 255, 0.7);
+  margin: 4px 0 0 8px; }
+
+#progress-indicator {
   display: none;
   margin: 32px 0 16px 0; }
 
