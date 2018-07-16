@@ -1,3 +1,5 @@
+![Example image](example.png)
+
 # Features
 
 ## Images
