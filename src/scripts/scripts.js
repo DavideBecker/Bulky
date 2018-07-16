@@ -1,17 +1,19 @@
+// Dependencies
 let $ = require('jquery')
-// import * as $ from 'jquery'
 let doT = require(__dirname + '/vendor/doT.min.js')
-// import * as doT from './vendor/doT.js'
+const sharp = require('sharp');
+const path = require('path');
+// let electron = require('electron');
+const {
+    dialog
+} = require('electron').remote
 
-let remote = require('electron').remote;
-
+process.dlopen = () => {
+    throw new Error('Load native module is not safe')
+}
+// Web workers
 var fileSorter = new Worker('./app/assets/js/workers/fileSorter.js');
-
-let $labels = $('.radio-button-input[name="media-type"]')
-
-$labels.change(function() {
-    console.log(1)
-})
+// var imageConverter = new Worker('./app/assets/js/workers/imageConverter.js');
 
 function getElem(id) {
     return document.getElementById(id)
@@ -30,6 +32,7 @@ const elems = {
     videoStats: getElem('video-stats'),
     imageStats: getElem('image-stats'),
     audioStats: getElem('audio-stats'),
+    begin: getElem('begin-converting'),
 
     tpl: {
         file: tpl('file')
@@ -40,35 +43,36 @@ function contentAnimation(elem, contentToAdd, onceDone) {
     elem.classList.remove('animating')
     elem.style.width = 'auto'
     elem.style.height = 'auto'
+    console.log(elem)
     var previous = {
         width: elem.scrollWidth,
         height: elem.scrollHeight
     }
+    console.log(previous)
     contentToAdd(elem)
+
+    var current = {
+        width: elem.scrollWidth,
+        height: elem.scrollHeight
+    }
+    console.log(current)
+
+    elem.style.width = previous.width + 'px'
+    elem.style.height = previous.height + 'px'
+
     window.setTimeout(function() {
-
-        var current = {
-            width: elem.scrollWidth,
-            height: elem.scrollHeight
-        }
-
-        elem.style.width = previous.width + 'px'
-        elem.style.height = previous.height + 'px'
         elem.classList.add('animating')
+        elem.style.width = current.width + 'px'
+        elem.style.height = current.height + 'px'
 
         window.setTimeout(function() {
-            elem.style.width = current.width + 'px'
-            elem.style.height = current.height + 'px'
-
-            window.setTimeout(function() {
-                elem.style.width = 'auto'
-                elem.style.height = 'auto'
-                if (onceDone) {
-                    onceDone()
-                }
-            }, 500)
-        }, 10)
-    }, 10)
+            elem.style.width = 'auto'
+            elem.style.height = 'auto'
+            if (onceDone) {
+                onceDone()
+            }
+        }, 500)
+    }, 1)
 
 }
 
@@ -92,6 +96,15 @@ function calculateFileSize(bytes, si) {
     } while (Math.abs(bytes) >= thresh && u < units.length - 1);
     return bytes.toFixed(1) + ' ' + units[u];
 }
+
+let $labels = $('.radio-button-input[name="media-type"]')
+
+$labels.change(function(e) {
+    // let that = this
+    // contentAnimation(elems.uploader, function() {
+    //     document.body.dataset.settings = that.dataset.media
+    // })
+})
 
 elems.fileCatcher.ondragover = (e) => {
     elems.fileCatcher.classList.add('active')
@@ -121,6 +134,9 @@ elems.fileCatcher.ondrop = (e) => {
 
     switchStage('parsing')
 
+    $labels.prop('checked', false)
+    document.body.dataset.settings = false
+
     return false;
 };
 
@@ -145,7 +161,47 @@ document.addEventListener('drop', function(event) {
     return false;
 }, false);
 
+elems.begin.addEventListener('click', function() {
+    var output = dialog.showOpenDialog({
+        properties: ['openDirectory']
+    });
+
+    if (output.length) {
+        // imageConverter.postMessage({
+        //     output: output[0],
+        //     input: fileBacklog.image.files
+        // })
+
+        for (var image of fileBacklog.image.files) {
+
+            sharp(image.path)
+                .resize(1920, 1080, {
+                    kernel: sharp.kernel.nearest
+                })
+                .max()
+                .withoutEnlargement(true)
+                // .toBuffer()
+                .toFile(path.join(output[0], '/', image.name))
+            .then(info => {
+                i++;
+                console.log({
+                    type: 'progress',
+                    count: i
+                })
+            })
+            .catch(err => {
+                console.log({
+                    type: 'error',
+                    message: err
+                })
+            });
+        }
+    }
+})
+
 // Web Worker listeners
+
+let fileBacklog = []
 
 fileSorter.addEventListener('message', function(e) {
     let data = e.data
@@ -154,6 +210,7 @@ fileSorter.addEventListener('message', function(e) {
         elems.parsingProgressBar.style.width = (data.count / backlog *
             100) + '%'
     } else if (data.type == 'done') {
+        fileBacklog = data.result
         contentAnimation(elems.uploader, function() {
             var stats = data.result
 
@@ -168,4 +225,8 @@ fileSorter.addEventListener('message', function(e) {
             switchStage('parsed')
         })
     }
-}, false);
+}, false)
+
+// imageConverter.addEventListener('message', function(e) {
+//     console.log(e.data)
+// }, false)
