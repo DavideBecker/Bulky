@@ -1,6 +1,6 @@
-const imagemin = require('imagemin');
-const imageminJpegtran = require('imagemin-jpegtran');
-const imageminPngquant = require('imagemin-pngquant');
+// const imagemin = require('imagemin');
+// const imageminJpegtran = require('imagemin-jpegtran');
+// const imageminPngquant = require('imagemin-pngquant');
 const sharp = require('sharp');
 const path = require('path')
 

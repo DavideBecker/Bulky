@@ -1,10 +1,10 @@
 'use strict';
 
 var gulp = require('gulp');
-var ts = require("gulp-typescript");
+// var ts = require("gulp-typescript");
 var sass = require('gulp-sass');
 
-var tsProject = ts.createProject('tsconfig.json');
+// var tsProject = ts.createProject('tsconfig.json');
 
 var electron = require('electron-connect').server.create();
 
