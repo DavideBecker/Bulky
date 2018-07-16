@@ -1,11 +1,13 @@
-var $ = require('jquery')
+let $ = require('jquery')
 // import * as $ from 'jquery'
-var doT = require(__dirname + '/vendor/doT.js')
+let doT = require(__dirname + '/vendor/doT.min.js')
 // import * as doT from './vendor/doT.js'
 
 let remote = require('electron').remote;
 
-var $labels = $('.radio-button-input[name="media-type"]')
+var fileSorter = new Worker('./workers/fileSorter.js');
+
+let $labels = $('.radio-button-input[name="media-type"]')
 
 $labels.change(function() {
     console.log(1)
@@ -19,13 +21,47 @@ function tpl(id) {
     return doT.template(getElem('tpl-' + id).innerHTML)
 }
 
-let elems = {
+const elems = {
     files: getElem('selected-files'),
     fileCatcher: getElem('drag-file'),
 
     tpl: {
         file: tpl('file')
     }
+}
+
+const fileCategories = {
+    'image/jpeg': 'image',
+    'video/quicktime': 'video',
+    'video/mp4': 'video'
+}
+
+// https://stackoverflow.com/questions/10420352/converting-file-size-in-bytes-to-human-readable-string
+function calculateFileSize(bytes, si) {
+    var thresh = si ? 1000 : 1024;
+    if(Math.abs(bytes) < thresh) {
+        return bytes + ' B';
+    }
+    var units = si
+        ? ['kB','MB','GB','TB','PB','EB','ZB','YB']
+        : ['KiB','MiB','GiB','TiB','PiB','EiB','ZiB','YiB'];
+    var u = -1;
+    do {
+        bytes /= thresh;
+        ++u;
+    } while(Math.abs(bytes) >= thresh && u < units.length - 1);
+    return bytes.toFixed(1)+' '+units[u];
+}
+
+function parseFile(file) {
+    let category = fileCategories[file.type] || false
+    if(!category)
+        return false
+
+    file.category = category;
+    file.humaneSize = calculateFileSize(file.size)
+    
+    return file
 }
 
 elems.fileCatcher.ondragover = (e) => {
@@ -49,24 +85,61 @@ elems.fileCatcher.ondrop = (e) => {
     //     console.log('File(s) you dragged here: ', f.path)
     // }
 
-    var files = Array.from(e.dataTransfer.files)
+    let files = Array.from(e.dataTransfer.files)
 
-    var results = []
+    console.log(files)
 
-    var i = 0;
-
-    for(var file of files) {
-        results.push(elems.tpl.file({
-            type: file.type,
-            name: file.name,
-            path: file.path,
-            size: file.size,
-            delay: Math.min(i * 15, 500)
-        }))
-        i++
+    let results = {
+        'video': {
+            totalSize: 0,
+            files: []
+        },
+        'image': {
+            totalSize: 0,
+            files: []
+        },
+        'audio': {
+            totalSize: 0,
+            files: []
+        }
     }
 
-    elems.files.innerHTML = results.join('')
+    let i = 0;
+
+    for(let file of files) {
+        let meta = parseFile(file)
+        if(meta) {
+            results[meta.category].totalSize += meta.size
+            results[meta.category].files.push(meta)
+        }
+    }
+
+    fileSorter.addEventListener('message', function(e) {
+        console.log(e.data);
+      }, false);
+
+    fileSorter.postMessage(files);
+
+    console.log(results)
+
+    // elems.files.innerHTML = results.join('')
+
+    // let results = []
+
+    // let i = 0;
+
+    // for(let file of files) {
+    //     results.push(elems.tpl.file({
+    //         type: file.type,
+    //         name: file.name,
+    //         path: file.path,
+    //         size: file.size,
+    //         delay: Math.min(i * 15, 500)
+    //     }))
+    //     i++
+    // }
+
+    // elems.files.innerHTML = results.join('')
     
 
     // (async () => {
@@ -89,7 +162,6 @@ elems.fileCatcher.ondrop = (e) => {
     // })
 
     elems.fileCatcher.classList.remove('active')
-    document.body.dataset.step = 'file-list'
 
     return false;
 };

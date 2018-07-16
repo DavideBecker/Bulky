@@ -11,9 +11,9 @@ var electron = require('electron-connect').server.create();
 var baseURL = './'
 var config = {
     scripts: { 
-        in: baseURL + 'src/scripts/main.js',
+        in: baseURL + 'src/scripts/**/*',
         out: baseURL + 'app/assets/js/',
-        watch: baseURL + '/src/scripts/**'
+        watch: baseURL + '/src/scripts/**/*'
     },
     styles: {
         in: baseURL + 'src/styles/main.scss',
@@ -26,7 +26,7 @@ var config = {
     }
 }
 
-gulp.task('scripts:compile', () => {
+gulp.task('scripts:move', () => {
     var tsResult = gulp.src(config.scripts.in)
         // .pipe(tsProject().on('error', console.log));
     return tsResult.pipe(gulp.dest(config.scripts.out));
@@ -44,11 +44,11 @@ gulp.task('serve', () => {
     electron.start();
 
     gulp.watch(config.styles.watch, ['styles:compile']);
-    gulp.watch(config.scripts.watch, ['scripts:compile']);
+    gulp.watch(config.scripts.watch, ['scripts:move']);
 
     // Restart browser process
     gulp.watch(config.electron.main, electron.restart);
 
     // Reload renderer process
-    gulp.watch([config.scripts.out, config.styles.out, config.electron.template], electron.reload);
+    gulp.watch([config.scripts.watch, config.styles.watch, config.electron.template], electron.reload);
 });
