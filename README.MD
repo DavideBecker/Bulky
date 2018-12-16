@@ -4,6 +4,8 @@
 
 Fast and straightforward image optimisation.
 
+Bulky is a tool that allows you to quickly compress your media files.
+
 A test of 908 DSLR images with a resolution of 6000x4000 resulted in a 40x compression from 7 GB to 170 MB while taking only 2 minutes to complete.
 
 # Features
