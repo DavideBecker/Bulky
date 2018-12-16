@@ -18,10 +18,12 @@ Planned: CR2
 * Lossy compression
 
 ## Videos
-Supported file types: none    
-Planned: Mp4, mov
+Supported file types: Everything that FFMPEG supports (So almost anything)    
+Planned: Nothing for now
 
-NYI
+* Changes Framerate to 30fps
+* Downscales video to 720p
+* Slightly reduces bitrate
 
 ## Audio
 Supported file types: none    
@@ -32,4 +34,5 @@ NYI
 # Upcoming features
 
 * Customize settings
-* Improve process indication while compressing
+* Improve progress indicator while the tool does its thing
+* Move compression processes to worker threads
