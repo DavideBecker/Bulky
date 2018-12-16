@@ -233,7 +233,11 @@ body[data-settings="audio"] #settings-audio {
 
 .feature-description {
   color: rgba(255, 255, 255, 0.7);
-  margin: 4px 0 0 8px; }
+  margin: 4px 0 0 24px; }
+
+.feature-input {
+  padding-left: 24px;
+  margin: 8px 0; }
 
 #progress-indicator {
   display: none;

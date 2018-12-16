@@ -26,11 +26,12 @@ self.addEventListener('message', function(e) {
     for (var image of data.input) {
 
         sharp(image.path)
-            .resize(1920, 1080, {
-                kernel: sharp.kernel.nearest
+            .resize(190, 100, {
+                kernel: 'nearest',
+                fit: 'inside',
+                withoutEnlargement: true
             })
-            .max()
-            .withoutEnlargement(true)
+            .rotate()
             // .toBuffer()
             .toFile(path.join(data.output, '/', image.name))
         // .then(info => {
