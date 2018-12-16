@@ -19,33 +19,33 @@ const path = require('path')
 // }
 
 self.addEventListener('message', function(e) {
-    var data = e.data;
+  var data = e.data;
 
-    var i = 0;
+  var i = 0;
 
-    for (var image of data.input) {
+  for (var image of data.input) {
 
-        sharp(image.path)
-            .resize(190, 100, {
-                kernel: 'nearest',
-                fit: 'inside',
-                withoutEnlargement: true
-            })
-            .rotate()
-            // .toBuffer()
-            .toFile(path.join(data.output, '/', image.name))
-        // .then(info => {
-        //     i++;
-        //     self.postMessage({
-        //         type: 'progress',
-        //         count: i
-        //     })
-        // })
-        // .catch(err => {
-        //     self.postMessage({
-        //         type: 'error',
-        //         message: err
-        //     })
-        // });
-    }
+    sharp(image.path)
+      .resize(190, 100, {
+        kernel: 'nearest',
+        fit: 'inside',
+        withoutEnlargement: true
+      })
+      .rotate()
+      // .toBuffer()
+      .toFile(path.join(data.output, '/', image.name))
+    // .then(info => {
+    //     i++;
+    //     self.postMessage({
+    //         type: 'progress',
+    //         count: i
+    //     })
+    // })
+    // .catch(err => {
+    //     self.postMessage({
+    //         type: 'error',
+    //         message: err
+    //     })
+    // });
+  }
 }, false);
