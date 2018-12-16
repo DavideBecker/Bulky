@@ -1,48 +1,69 @@
 {
-    "name": "bulky",
-    "version": "1.0.0",
-    "description": "Batch processing made simple",
-    "main": "main.js",
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1",
-        "start": "gulp serve",
-        "pack": "electron-builder --dir",
-        "dist": "electron-builder",
-        "postinstall": "electron-builder install-app-deps"
-    },
-    "build": {
-        "appId": "me.davide.bulky",
-        "extraFiles": [
-            {
-                "from": "resources/${os}",
-                "to": "Resources/bin",
-                "filter": [
-                    "**/*"
-                ]
-            }
+  "name": "bulky",
+  "version": "1.0.0",
+  "description": "Batch processing made simple",
+  "main": "main.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "gulp serve",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "build": {
+    "appId": "me.davide.bulky",
+    "extraFiles": [
+      {
+        "from": "resources/${os}",
+        "to": "Resources/bin",
+        "filter": [
+          "**/*"
         ]
+      }
+    ],
+    "mac": {
+      "category": "public.app-category.productivity",
+      "files": [
+        "!node_modules/ffmpeg-static/bin/win${/*}",
+        "!node_modules/ffmpeg-static/bin/linux${/*}"
+      ]
     },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/DavideBecker/Bulky.git"
+    "win": {
+      "files": [
+        "!node_modules/ffmpeg-static/bin/darwin${/*}",
+        "!node_modules/ffmpeg-static/bin/linux${/*}"
+      ]
     },
-    "author": "Davide Becker",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/DavideBecker/Bulky/issues"
-    },
-    "homepage": "https://github.com/DavideBecker/Bulky#readme",
-    "dependencies": {
-        "electron": "^3.0.12",
-        "jquery": "^3.3.1",
-        "sharp": "^0.21.1"
-    },
-    "devDependencies": {
-        "@types/jquery": "^3.3.27",
-        "electron-builder": "^20.38.3",
-        "electron-connect": "^0.6.3",
-        "electron-rebuild": "^1.8.2",
-        "gulp": "3",
-        "gulp-sass": "^4.0.2"
+    "linux": {
+      "files": [
+        "!node_modules/ffmpeg-static/bin/win${/*}",
+        "!node_modules/ffmpeg-static/bin/darwin${/*}"
+      ]
     }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DavideBecker/Bulky.git"
+  },
+  "author": "Davide Becker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/DavideBecker/Bulky/issues"
+  },
+  "homepage": "https://github.com/DavideBecker/Bulky#readme",
+  "dependencies": {
+    "electron": "^3.0.12",
+    "ffmpeg-static": "^2.4.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "jquery": "^3.3.1",
+    "sharp": "^0.21.1"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.3.27",
+    "electron-builder": "^20.38.3",
+    "electron-connect": "^0.6.3",
+    "electron-rebuild": "^1.8.2",
+    "gulp": "3",
+    "gulp-sass": "^4.0.2"
+  }
 }
